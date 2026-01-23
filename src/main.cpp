@@ -81,8 +81,8 @@ void opcontrol() {
     pros::MotorGroup gameSystem({19, 20});
 
 
-    double forTrim = 0.6;
-    double latTrim = 0.5;
+    double forTrim = 0.85;
+    double latTrim = 0.6;
 	while (true) {
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
