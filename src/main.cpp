@@ -78,6 +78,7 @@ void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	pros::MotorGroup left_mg({-1, -2, -3});    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
 	pros::MotorGroup right_mg({11, 12, 13});  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
+    pros::MotorGroup io_mg({8, 9}); // Creates a motor group with forward ports 8 & 9
     pros::MotorGroup gameSystem({19, 20});
 
 
@@ -126,6 +127,15 @@ void opcontrol() {
                 forTrim = 0;
             }
         }
+
+        if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+            io_mg.move(127);
+        } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+            io_mg.move(-127);
+        } else {
+            io_mg.move(0);
+        }
+
 		// Arcade control scheme
 		int dir = forTrim*(master.get_analog(ANALOG_LEFT_Y));    // Gets amount forward/backward from left joystick
 		int turn = -latTrim*(master.get_analog(ANALOG_LEFT_X));  // Gets the turn left/right from left joystick
