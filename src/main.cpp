@@ -80,6 +80,8 @@ void opcontrol() {
 	pros::MotorGroup right_mg({11, 12, 13});  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
     pros::MotorGroup io_mg({8, 9}); // Creates a motor group with forward ports 8 & 9
     pros::MotorGroup gameSystem({19, 20});
+    pros::adi::Pneumatics heightMech('a', false);
+    pros::adi::Pneumatics flap('b', false);
 
 
     double forTrim = 0.85;
@@ -109,7 +111,7 @@ void opcontrol() {
                 latTrim = 0;
             }
         }
-        if(master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)){
+        if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
             forTrim+=0.05;
             if(latTrim >= 100){
                 forTrim = 100;
@@ -118,7 +120,7 @@ void opcontrol() {
                 forTrim = 0;
             }
         }
-        if(master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)){
+        if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
             forTrim-=0.05;
             if(latTrim >= 100){
                 forTrim = 100;
@@ -135,17 +137,22 @@ void opcontrol() {
         } else {
             io_mg.move(0);
         }
-
+        if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+            flap.extend();
+        } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+            flap.retract();
+        } 
+        if(master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)){
+            heightMech.extend();
+        } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)){
+            heightMech.retract();
+        } 
 		// Arcade control scheme
 		int dir = forTrim*(master.get_analog(ANALOG_LEFT_Y));    // Gets amount forward/backward from left joystick
 		int turn = -latTrim*(master.get_analog(ANALOG_LEFT_X));  // Gets the turn left/right from left joystick
 		left_mg.move(dir - turn);                      // Sets left motor voltage
 		right_mg.move(dir + turn);                     // Sets right motor voltage
-        if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)){
-            gameSystem.move(127);
-        } else { 
-            gameSystem.move(0);
-        }
+        
 		pros::delay(20);                               // Run for 20 ms then update
 	}
 }
